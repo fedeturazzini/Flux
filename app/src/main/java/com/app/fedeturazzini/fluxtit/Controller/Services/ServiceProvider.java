@@ -1,12 +1,11 @@
 package com.app.fedeturazzini.fluxtit.Controller.Services;
 
 import com.app.fedeturazzini.fluxtit.Model.Pet;
-import com.app.fedeturazzini.fluxtit.Model.Pets;
-import com.app.fedeturazzini.fluxtit.Model.Pets_;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-import org.greenrobot.eventbus.EventBus;
-
-import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,10 +24,14 @@ public class ServiceProvider {
     /** URL RETROFIT **/
     public Retrofit getRetrofit() {
 
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
         if (retrofit == null) {
             this.retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 
                     .build();
@@ -42,19 +45,19 @@ public class ServiceProvider {
             availableFlag = "available";
         }
         Services servicePet = getRetrofit().create(Services.class);
-        Call <ArrayList<Pets>> articlesCall = servicePet.getPets(availableFlag);
-        articlesCall.enqueue(new Callback<ArrayList<Pets>>() {
+        Call <List<Pet>> petCall = servicePet.getPets(availableFlag);
+        petCall.enqueue(new Callback <List<Pet>>() {
             @Override
-            public void onResponse(Call<ArrayList<Pets>> call, Response<ArrayList<Pets>> response) {
+            public void onResponse(Call<List<Pet>> call, Response<List<Pet>> response) {
                 if (response.isSuccessful()) {
-                    response.body();
+//                    ArrayList<List<Pet>> listPet = response.body();
                 } else {
                     response.errorBody();
                 }
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Pets>> call, Throwable t) {
+            public void onFailure(Call<List<Pet>> call, Throwable t) {
                 t.printStackTrace();
             }
         });
