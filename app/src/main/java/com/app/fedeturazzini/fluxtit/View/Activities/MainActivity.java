@@ -109,7 +109,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                recyclerPetAdapter.setFilter(petArrayList);
+                if (petArrayList != null) {
+                    recyclerPetAdapter.setFilter(petArrayList);
+                }
                 return true;
             }
         });
