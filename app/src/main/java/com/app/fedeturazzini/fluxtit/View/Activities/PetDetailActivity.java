@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.app.fedeturazzini.fluxtit.Controller.Services.ServiceProvider;
 import com.app.fedeturazzini.fluxtit.R;
@@ -33,6 +35,17 @@ public class PetDetailActivity extends AppCompatActivity {
         GoogleFragment googleFragment = new GoogleFragment();
         putFragmentFirstContainer(petDetailFragment);
         putFragmentSecondContainer(googleFragment);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        // Title and subtitle
+        toolbar.setTitle("PET");
+        toolbar.setNavigationIcon(R.drawable.ic_action_back);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     /** Request method **/
