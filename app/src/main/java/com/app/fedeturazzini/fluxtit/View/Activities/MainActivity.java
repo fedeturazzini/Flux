@@ -1,6 +1,8 @@
 package com.app.fedeturazzini.fluxtit.View.Activities;
 
 import android.content.Context;
+import android.os.Build;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +24,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
@@ -31,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private RecyclerPetAdapter recyclerPetAdapter;
     private List<Pet> petArrayList;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private FloatingActionButton fabButton;
+    private boolean flagSort = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +58,38 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+
+        /** Order list **/
+        fabButton = findViewById(R.id.fab);
+        fabButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    if (!flagSort) {
+                        Collections.sort(petArrayList, new Comparator<Pet>() {
+                            @Override
+                            public int compare(Pet o1, Pet o2) {
+                                return Integer.valueOf(o2.getId().compareTo(o1.getId()));
+                            }
+                        });
+                        recyclerPetAdapter.setPetArrayList(petArrayList);
+                        flagSort = true;
+                    } else {
+                        Collections.sort(petArrayList, new Comparator<Pet>() {
+                            @Override
+                            public int compare(Pet o1, Pet o2) {
+                                return Integer.valueOf(o1.getId().compareTo(o2.getId()));
+                            }
+                        });
+                        recyclerPetAdapter.setPetArrayList(petArrayList);
+                        flagSort = false;
+                    }
+                }
+            }
+        });
     }
-    // Menu
+
+    /** Menu **/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_buscador, menu);
@@ -77,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return super.onCreateOptionsMenu(menu);
     }
 
-    // Search
+    /** Search **/
     @Override
     public boolean onQueryTextSubmit(String query) {
         return false;

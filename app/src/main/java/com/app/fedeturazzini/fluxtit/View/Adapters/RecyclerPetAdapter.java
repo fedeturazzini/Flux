@@ -98,6 +98,11 @@ public class RecyclerPetAdapter extends RecyclerView.Adapter<RecyclerPetAdapter.
         notifyDataSetChanged();
     }
 
+    public void setPetArrayList (List<Pet> listPet) {
+        this.petArrayList = listPet;
+        notifyDataSetChanged();
+    }
+
     // View Holder
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
