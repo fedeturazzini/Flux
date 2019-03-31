@@ -1,9 +1,16 @@
 package com.app.fedeturazzini.fluxtit.Controller.Services;
 
+import android.content.Context;
+import android.widget.Toast;
+
+import com.app.fedeturazzini.fluxtit.Controller.Events.PetByIdEvent;
+import com.app.fedeturazzini.fluxtit.Controller.Events.PetEvents;
 import com.app.fedeturazzini.fluxtit.Model.Pet;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -40,17 +47,23 @@ public class ServiceProvider {
     }
 
     /** GET RETROFIT REQUEST **/
-    public void getPets (boolean available) {
-        if (available) {
+    public void getPets (boolean available, final Context context) {
+
+        if (available) { // Se hardocodeo la logica solo para que funcione con available y pending. En la documentacion esta el status SOLD
             availableFlag = "available";
+        } else {
+            availableFlag = "pending";
         }
-        Services servicePet = getRetrofit().create(Services.class);
+
+        Service servicePet = getRetrofit().create(Service.class);
         Call <List<Pet>> petCall = servicePet.getPets(availableFlag);
         petCall.enqueue(new Callback <List<Pet>>() {
             @Override
             public void onResponse(Call<List<Pet>> call, Response<List<Pet>> response) {
                 if (response.isSuccessful()) {
-//                    ArrayList<List<Pet>> listPet = response.body();
+                    List<Pet> pets = response.body();
+                    EventBus.getDefault().post(new PetEvents(pets));
+                    Toast.makeText(context, "Exito", Toast.LENGTH_LONG).show();
                 } else {
                     response.errorBody();
                 }
@@ -59,10 +72,35 @@ public class ServiceProvider {
             @Override
             public void onFailure(Call<List<Pet>> call, Throwable t) {
                 t.printStackTrace();
+                Toast.makeText(context, "Fallo", Toast.LENGTH_LONG).show();
             }
         });
-
     }
+
+    public void getPetId (String id, final Context context) {
+
+        Service servicePet = getRetrofit().create(Service.class);
+        Call <Pet> petCall = servicePet.getPetById(id);
+        petCall.enqueue(new Callback <Pet>() {
+            @Override
+            public void onResponse(Call<Pet> call, Response<Pet> response) {
+                if (response.isSuccessful()) {
+                    Pet pet = response.body();
+                    EventBus.getDefault().post(new PetByIdEvent(pet));
+                    Toast.makeText(context, "Exito", Toast.LENGTH_LONG).show();
+                } else {
+                    response.errorBody();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Pet> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(context, "Fallo", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
 
 
 }
