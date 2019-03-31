@@ -6,7 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 
 import com.app.fedeturazzini.fluxtit.Controller.Events.PetEvents;
 import com.app.fedeturazzini.fluxtit.Controller.Services.ServiceProvider;
@@ -18,9 +21,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     /** Private **/
     private RecyclerView recyclerViewPet;
@@ -49,6 +53,47 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    // Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_buscador, menu);
+        MenuItem item = menu.findItem(R.id.buscador);
+        SearchView searchView = (SearchView) item.getActionView();
+        searchView.setOnQueryTextListener(this);
+
+        item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                recyclerPetAdapter.setFilter(petArrayList);
+                return true;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // Search
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        try {
+            List<Pet> petList = filter((ArrayList<Pet>) petArrayList, newText);
+            recyclerPetAdapter.setFilter(petList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     /** Event bus **/
     @Override
@@ -80,4 +125,20 @@ public class MainActivity extends AppCompatActivity {
         serviceProvider.getPets(true, context);
     }
 
+    /** Metodo para filtrar **/
+    private List<Pet> filter (ArrayList <Pet> pets, String textIngresado) {
+        List<Pet> petListFilter = new ArrayList<>();
+        try {
+            textIngresado = textIngresado.toLowerCase();
+            for (Pet pet: pets) {
+                String pet2 = pet.getName().toLowerCase();
+                if (pet2.contains(textIngresado)) {
+                    petListFilter.add(pet);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return petListFilter;
+    }
 }

@@ -17,6 +17,7 @@ import com.app.fedeturazzini.fluxtit.R;
 import com.app.fedeturazzini.fluxtit.View.Activities.PetDetailActivity;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecyclerPetAdapter extends RecyclerView.Adapter<RecyclerPetAdapter.MyViewHolder> {
@@ -89,6 +90,12 @@ public class RecyclerPetAdapter extends RecyclerView.Adapter<RecyclerPetAdapter.
     @Override
     public int getItemCount() {
         return petArrayList.size();
+    }
+
+    public void setFilter (List<Pet> listPetFiltrada) {
+        this.petArrayList = new ArrayList<>();
+        this.petArrayList = listPetFiltrada;
+        notifyDataSetChanged();
     }
 
     // View Holder
