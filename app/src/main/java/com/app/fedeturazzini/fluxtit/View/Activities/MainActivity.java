@@ -66,23 +66,27 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     if (!flagSort) {
-                        Collections.sort(petArrayList, new Comparator<Pet>() {
-                            @Override
-                            public int compare(Pet o1, Pet o2) {
-                                return Integer.valueOf(o2.getId().compareTo(o1.getId()));
-                            }
-                        });
-                        recyclerPetAdapter.setPetArrayList(petArrayList);
-                        flagSort = true;
+                        if (petArrayList != null) {
+                            Collections.sort(petArrayList, new Comparator<Pet>() {
+                                @Override
+                                public int compare(Pet o1, Pet o2) {
+                                    return Integer.valueOf(o2.getId().compareTo(o1.getId()));
+                                }
+                            });
+                            recyclerPetAdapter.setPetArrayList(petArrayList);
+                            flagSort = true;
+                        }
                     } else {
-                        Collections.sort(petArrayList, new Comparator<Pet>() {
-                            @Override
-                            public int compare(Pet o1, Pet o2) {
-                                return Integer.valueOf(o1.getId().compareTo(o2.getId()));
-                            }
-                        });
-                        recyclerPetAdapter.setPetArrayList(petArrayList);
-                        flagSort = false;
+                        if (petArrayList != null) {
+                            Collections.sort(petArrayList, new Comparator<Pet>() {
+                                @Override
+                                public int compare(Pet o1, Pet o2) {
+                                    return Integer.valueOf(o1.getId().compareTo(o2.getId()));
+                                }
+                            });
+                            recyclerPetAdapter.setPetArrayList(petArrayList);
+                            flagSort = false;
+                        }
                     }
                 }
             }
