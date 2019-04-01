@@ -165,8 +165,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     public void orderList () {
-        if (!flagSort) {
-            if (petArrayList != null) {
+        if (petArrayList != null) {
+            if (!flagSort) {
                 Collections.sort(petArrayList, new Comparator<Pet>() {
                     @Override
                     public int compare(Pet o1, Pet o2) {
@@ -175,9 +175,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 });
                 recyclerPetAdapter.setPetArrayList(petArrayList);
                 flagSort = true;
-            }
-        } else {
-            if (petArrayList != null) {
+            } else {
                 Collections.sort(petArrayList, new Comparator<Pet>() {
                     @Override
                     public int compare(Pet o1, Pet o2) {
